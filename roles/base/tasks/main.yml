@@ -1,0 +1,40 @@
+---
+- name: Check if the OS is Debian-based
+  assert:
+    that: "'Debian' in ansible_facts.os_family"
+    fail_msg: "The Operating System is **not** Debian based ({{ ansible_facts.os_family }})!"
+    success_msg: "The Operating System is Debian based, All good !"
+
+- name: Update the system
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Install new packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Make a cron to update the system
+  cron:
+    name: update_apt
+    user: root
+    special_time: weekly
+    backup: yes
+    job: "apt-get update -y; apt-get upgrade -y; apt-get autoremove -y"
+
+- name: Install NPM packages
+  npm:
+    name: "{{ item }}"
+    state: latest
+    global: yes
+  loop:
+    - n
+    - yarn
+
+- name: Install NodeJS LTS version
+  command: "n lts"
+
+- name: Install Docker
+  import_tasks: docker.yml

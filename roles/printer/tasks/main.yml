@@ -1,0 +1,64 @@
+---
+- name: CUPS - Listen *:631
+  replace:
+    path: /etc/cups/cupsd.conf
+    regexp: "Listen localhost:631"
+    replace: "Listen 631"
+
+- name: CUPS - Show shared printers on local network
+  lineinfile:
+    path: /etc/cups/cupsd.conf
+    line: "BrowseAddress @LOCAL"
+    insertafter: "# Show shared printers on the local network."
+
+- name: CUPS - Location configuration
+  lineinfile:
+    path: /etc/cups/cupsd.conf
+    line: "  Allow @Local # Ansible: {{ item }}"
+    insertafter: "{{ item }}"
+  loop:
+    - "<Location />"
+    - "<Location /admin>"
+    - "<Location /admin/conf>"
+
+- name: "CUPS - Add '{{ user }}' to the lpadmin group"
+  user:
+    name: "{{ user }}"
+    groups: "lpadmin"
+    append: yes
+
+- name: CUPS - Restart service
+  service:
+    name: cups
+    state: restarted
+    enabled: yes
+  no_log: true
+
+- name: SANE - Start saned and run as 'saned'
+  lineinfile:
+    path: /etc/default/saned
+    line: "{{ item }}"
+  loop:
+    - "RUN=yes"
+    - "RUN_AS_USER=saned"
+
+- name: SANE - Add network address
+  blockinfile:
+    path: /etc/sane.d/saned.conf
+    block: "192.168.1.0/24"
+
+- name: "SANE - Add 'saned' deamon to the lp group"
+  user:
+    name: "saned"
+    groups: "lp"
+    append: yes
+
+- name: SANE - Restart service
+  service:
+    name: saned
+    state: restarted
+    enabled: yes
+  no_log: true
+
+- name: "SANE - Install and start a scanservjs container"
+  import_tasks: scannerjs.yml

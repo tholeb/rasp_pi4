@@ -1,0 +1,24 @@
+---
+- name: ScannerJS - Pull scanservjs Docker image
+  docker_image:
+    name: sbs20/scanservjs
+    source: pull
+    tag: latest
+
+- name: ScannerJS - Run scanservjs container
+  docker_container:
+    name: scanservjs-container
+    image: sbs20/scanservjs:latest
+    command: "--device=/dev/bus/usb/001/003:/dev/bus/usb/001/003"
+    state: started
+    restart: yes
+    tty: yes
+    interactive: yes
+    restart_policy: unless-stopped
+    privileged: yes
+    devices: /dev/bus/usb/001/003:/dev/bus/usb/001/003:rw
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /home/pi/scans/images:/app/data/output
+      - /home/pi/scans/config:/app/config
+    ports: "8080:8080"
