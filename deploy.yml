@@ -1,0 +1,12 @@
+---
+- name: Deploy the Raspberry Pi 4 🍓
+  hosts: all
+  become: yes
+  become_user: root
+  remote_user: "{{ ansible_ssh_user }}"
+  gather_facts: yes
+  vars_files:
+    - defaults/main.yml
+  roles:
+    # - base
+    - printer
