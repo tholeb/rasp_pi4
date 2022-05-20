@@ -5,8 +5,14 @@
   become_user: root
   remote_user: "{{ ansible_ssh_user }}"
   gather_facts: yes
+
+  collections:
+    - containers.podman
+
   vars_files:
     - defaults/main.yml
+
   roles:
     # - base
     - printer
+    - nas

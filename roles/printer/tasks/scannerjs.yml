@@ -1,24 +1,29 @@
 ---
-- name: ScannerJS - Pull scanservjs Docker image
-  docker_image:
+- name: ScannerJS - Pull Docker image
+  containers.podman.podman_image:
     name: sbs20/scanservjs
-    source: pull
+    pull: yes
     tag: latest
 
-- name: ScannerJS - Run scanservjs container
-  docker_container:
-    name: scanservjs-container
+- name: ScannerJS - Run container using podman
+  containers.podman.podman_container:
+    name: scanservjs
     image: sbs20/scanservjs:latest
-    command: "--device=/dev/bus/usb/001/003:/dev/bus/usb/001/003"
+    command: "--device=/dev/bus/usb/001/005:/dev/bus/usb/001/005"
     state: started
+    restart_policy: on-failure:5
+    recreate: yes
     restart: yes
-    tty: yes
-    interactive: yes
-    restart_policy: unless-stopped
-    privileged: yes
-    devices: /dev/bus/usb/001/003:/dev/bus/usb/001/003:rw
+    device: /dev/bus/usb/001/005:/dev/bus/usb/001/005:rw
     volumes:
       - /var/run/dbus:/var/run/dbus
       - /home/pi/scans/images:/app/data/output
       - /home/pi/scans/config:/app/config
-    ports: "8080:8080"
+    ports: "633:8080"
+    expose: 8080
+    user: "0:1003"
+    memory: "512m"
+  retries: 3
+  delay: 3
+  register: scContainer
+  until: scContainer is not failed
