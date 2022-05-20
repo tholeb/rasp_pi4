@@ -15,7 +15,7 @@
     force_restart: yes
     volumes:
       - /home/pi/cloud/:/mnt/data
-    ports: "8080:8080"
+    ports: "1026:8080"
     memory: "2048m"
   retries: 3
   delay: 3
