@@ -13,7 +13,7 @@
     - defaults/main.yml
 
   roles:
-    # - base
+    - base
     - printer
     - nas
 
