@@ -23,7 +23,15 @@
     expose: 8080
     user: "0:1003"
     memory: "512m"
+    generate_systemd:
+      path: /etc/systemd/system
   retries: 3
   delay: 3
   register: scContainer
   until: scContainer is not failed
+
+- name: ScannerJS - Enable service
+  service:
+    name: container-scanservjs
+    state: started
+    enabled: yes

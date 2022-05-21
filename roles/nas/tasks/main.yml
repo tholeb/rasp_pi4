@@ -17,7 +17,15 @@
       - /home/pi/cloud/:/mnt/data
     ports: "1026:8080"
     memory: "2048m"
+    generate_systemd:
+      path: /etc/systemd/system
   retries: 3
   delay: 3
   register: ocContainer
   until: ocContainer is not failed
+
+- name: OwnCloud - Enable service
+  service:
+    name: container-owncloud
+    state: started
+    enabled: yes
