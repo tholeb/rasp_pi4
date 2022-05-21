@@ -16,3 +16,9 @@
     # - base
     - printer
     - nas
+
+  tasks:
+    - name: Systemd daemon reload
+      systemd:
+        daemon_reload: yes
+        daemon_reexec: yes
