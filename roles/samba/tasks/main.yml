@@ -1,0 +1,32 @@
+---
+- name: Samba - create user
+  user:
+    name: smbuser
+    comment: Samba user
+    shell: /bin/bash
+    state: present
+    create_home: no
+    system: yes
+
+- name: Samba - Create directory for samba sharing
+  file:
+    path: /mnt/externalHDD/samba
+    state: directory
+    mode: 0777
+    owner: smbuser
+    group: smbuser
+    recurse: yes
+
+- name: Samba - configure the shared folder
+  blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [nas]
+      comment = Samba share on raspberrypi
+      path = /mnt/externalHDD/samba
+      writeable = yes
+      browseable = yes
+      public = yes
+      guest ok = yes
+      force user = smbuser
+      force group = smbuser
