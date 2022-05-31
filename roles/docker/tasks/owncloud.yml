@@ -1,0 +1,31 @@
+---
+- name: Create directory for owncloud
+  file:
+    path: /mnt/externalHDD/owncloud
+    state: directory
+    mode: "0755"
+
+- name: OwnCloud - Pull Docker image
+  containers.podman.podman_image:
+    name: docker.io/owncloud/server
+    pull: yes
+    tag: latest
+
+- name: OwnCloud - Run container using podman
+  containers.podman.podman_container:
+    name: owncloud
+    image: owncloud/server:latest
+    state: started
+    restart_policy: always
+    recreate: yes
+    force_restart: yes
+    volumes:
+      - /mnt/externalHDD/owncloud:/mnt/data
+    ports: "1026:8080"
+    memory: "2048m"
+    generate_systemd:
+      path: /etc/systemd/system
+  retries: 3
+  delay: 3
+  register: ocContainer
+  until: ocContainer is not failed

@@ -1,4 +1,14 @@
 ---
+- name: Create directories for scanner
+  file:
+    path: "/mnt/externalHDD/{{ item }}"
+    state: directory
+    mode: "0775"
+  loop:
+    - scans
+    - scans/images
+    - scans/config
+
 - name: ScannerJS - Pull Docker image
   containers.podman.podman_image:
     name: sbs20/scanservjs
@@ -17,8 +27,8 @@
     device: /dev/bus/usb/001/003:/dev/bus/usb/001/003:rw
     volumes:
       - /var/run/dbus:/var/run/dbus
-      - /home/pi/scans/images:/app/data/output
-      - /home/pi/scans/config:/app/config
+      - /mnt/externalHDD/scans/images:/app/data/output
+      - /mnt/externalHDD/scans/config:/app/config
     ports: "1025:8080"
     expose: 8080
     user: "0:1003"
@@ -29,9 +39,3 @@
   delay: 3
   register: scContainer
   until: scContainer is not failed
-
-- name: ScannerJS - Enable service
-  service:
-    name: container-scanservjs
-    state: started
-    enabled: yes
