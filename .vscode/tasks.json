@@ -5,10 +5,32 @@
     "tasks": [
         {
             "label": "Run playbook",
-            "detail": "Deploy the application on the selected hosts",
+            "detail": "Deploy the application to the hosts",
             "type": "shell",
             "command": "ansible-playbook deploy.yml -i inv/home.ini -vv;",
             "problemMatcher": []
+        },
+        {
+            "label": "Run specific role",
+            "detail": "Deploy a specific role to the hosts",
+            "type": "shell",
+            "command": "ansible-playbook -i inv/home.ini deploy.yml --tags ${input:tags} -vv",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "tags",
+            "description": "Le nom du role",
+            "default": "base",
+            "type":"pickString",
+            "options": [
+                "base",
+                "printer",
+                "docker",
+                "samba",
+                "vpn"
+            ]
         }
     ]
 }
