@@ -1,10 +1,4 @@
 ---
-- name: Check if the OS is Debian-based
-  assert:
-    that: "'Debian' in ansible_facts.os_family"
-    fail_msg: "The Operating System is **not** Debian based ({{ ansible_facts.os_family }})!"
-    success_msg: "The Operating System is Debian based, All good !"
-
 - name: Update the system
   apt:
     upgrade: yes
@@ -36,5 +30,14 @@
 - name: Install NodeJS LTS version
   command: "n lts"
 
-- name: Install Docker
-  import_tasks: docker.yml
+- name: Cockpit - Créé le fichier de configuration
+  copy:
+    src: cockpit.conf
+    dest: /etc/cockpit/
+
+- name: Mount a disk (/dev/sda1) to /mnt/externalHDD
+  mount:
+    path: /mnt/externalHDD
+    src: /dev/sda1
+    fstype: ext4
+    state: mounted
