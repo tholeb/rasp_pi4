@@ -12,13 +12,30 @@
   vars_files:
     - defaults/main.yml
 
-  roles:
-    - base
-    - printer
-    - nas
+  pre_tasks:
+    - name: Check if the OS is Debian-based
+      assert:
+        that: "'Debian' in ansible_facts.os_family"
+        fail_msg: "The Operating System is **not** Debian based ({{ ansible_facts.os_family }})!"
+        success_msg: "The Operating System is Debian based, All good !"
 
-  tasks:
+  roles:
+    - { role: "base", tags: "base" }
+    - { role: "printer", tags: "printer" }
+    - { role: "docker", tags: "docker" }
+    - { role: "samba", tags: "samba" }
+
+  post_tasks:
+    - name: "Start and enable multiple services : {{ services | join(', ') }}"
+      service:
+        name: fail2ban
+        state: restarted
+        enabled: yes
+      with_items: "{{ services }}"
+      no_log: true
+
     - name: Systemd daemon reload
       systemd:
         daemon_reload: yes
         daemon_reexec: yes
+      no_log: true
