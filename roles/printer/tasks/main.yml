@@ -27,13 +27,6 @@
     groups: "lpadmin"
     append: yes
 
-- name: CUPS - Restart service
-  service:
-    name: cups
-    state: restarted
-    enabled: yes
-  no_log: true
-
 - name: SANE - Start saned and run as 'saned'
   lineinfile:
     path: /etc/default/saned
@@ -52,13 +45,3 @@
     name: "saned"
     groups: "lp"
     append: yes
-
-- name: SANE - Restart service
-  service:
-    name: saned
-    state: restarted
-    enabled: yes
-  no_log: true
-
-- name: "SANE - Install and start a scanservjs container"
-  import_tasks: scannerjs.yml
