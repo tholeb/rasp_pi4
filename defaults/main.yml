@@ -30,6 +30,10 @@ packages:
   - cockpit-*
   - fail2ban
   - podman
+  - ca-certificates
+  - wget
+  - net-tools
+  - gnupg
 
 services:
   - fail2ban

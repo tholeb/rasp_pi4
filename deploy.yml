@@ -24,6 +24,7 @@
     - { role: "printer", tags: "printer" }
     - { role: "docker", tags: "docker" }
     - { role: "samba", tags: "samba" }
+    - { role: "vpn", tags: "vpn" }
 
   post_tasks:
     - name: "Start and enable multiple services : {{ services | join(', ') }}"

@@ -1,0 +1,16 @@
+---
+- name: Add OpenVPN GPG apt Key
+  apt_key:
+    url: https://as-repository.openvpn.net/as-repo-public.gpg
+    state: present
+
+- name: Add OpenVPN Repository
+  apt_repository:
+    repo: deb http://as-repository.openvpn.net/as/debian focal main
+    state: present
+
+- name: Install openvpn
+  apt:
+    update_cache: yes
+    name: openvpn
+    state: present
